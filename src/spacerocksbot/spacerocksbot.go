@@ -123,7 +123,17 @@ func main() {
 		return fmt.Sprintf("check out my source code %s ! 🚀", projectURL), nil
 	}, 24*time.Hour)
 	bot.RetweetPeriodicallyAsync(searchTweetQueries, *update)
-	bot.AutoUnfollowFriendsAsync()
-	bot.AutoFollowFollowersAsync("nasa", 1)
+	policy := &twbot.SleepPolicy{
+		MaxRand:               300,
+		MaybeSleepChance:      1,
+		MaybeSleepTotalChance: 10,
+		MaybeSleepMin:         2500,
+		MaybeSleepMax:         5000,
+	}
+	bot.AutoUnfollowFriendsAsync(policy)
+	policy.MaybeSleepChance = 5
+	policy.MaybeSleepMin = 5000
+	policy.MaybeSleepMax = 10000
+	bot.AutoFollowFollowersAsync("nasa", 1, policy)
 	bot.Wait()
 }
