@@ -122,7 +122,7 @@ func main() {
 	bot.TweetPeriodicallyAsync(func() (string, error) {
 		return fmt.Sprintf("check out my source code %s ! 🚀", projectURL), nil
 	}, 24*time.Hour)
-	bot.RetweetPeriodicallyAsync(searchTweetQueries, *update)
+	bot.RetweetPeriodicallyAsync(searchTweetQueries, bannedQueries, *update)
 	policy := &twbot.SleepPolicy{
 		MaxRand:               300,
 		MaybeSleepChance:      1,

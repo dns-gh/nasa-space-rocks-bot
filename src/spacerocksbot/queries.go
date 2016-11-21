@@ -55,4 +55,9 @@ var (
 		"asteroid discovery",
 		"Near-Earth Object Program",
 	}
+
+	bannedQueries = []string{
+		"sex",
+		"Bruno Mars",
+	}
 )
