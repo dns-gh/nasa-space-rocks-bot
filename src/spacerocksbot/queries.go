@@ -59,5 +59,6 @@ var (
 	bannedQueries = []string{
 		"sex",
 		"Bruno Mars",
+		"bruno mars",
 	}
 )

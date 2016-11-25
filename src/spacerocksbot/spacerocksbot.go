@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"time"
 
+	apod "github.com/dns-gh/nasa-apod-client/nasaclient"
 	neo "github.com/dns-gh/nasa-neo-client/nasaclient"
 	"github.com/dns-gh/twbot"
 
@@ -114,11 +115,11 @@ func main() {
 	log.Println("[twitter] debug:", *debug)
 	bot := twbot.MakeTwitterBot(*twitterFollowersPath, *twitterFriendsPath, *twitterTweetsPath, *debug)
 	defer bot.Close()
-	client := neo.MakeNasaNeoClient(*firstOffset, *offset, *nasaPath, *body, *debug)
+	neoClient := neo.MakeNasaNeoClient(*firstOffset, *offset, *nasaPath, *body, *debug)
 	bot.SetLikePolicy(true, maxFavoriteCountWatch)
 	bot.SetRetweetPolicy(maxTryRetweet, true)
-	bot.TweetSliceOnceAsync(client.FirstFetch)
-	bot.TweetSlicePeriodicallyAsync(client.Fetch, *poll)
+	bot.TweetSliceOnceAsync(neoClient.FirstFetch)
+	bot.TweetSlicePeriodicallyAsync(neoClient.Fetch, *poll)
 	bot.TweetPeriodicallyAsync(func() (string, error) {
 		return fmt.Sprintf("check out my source code %s ! 🚀", projectURL), nil
 	}, 24*time.Hour)
@@ -135,5 +136,7 @@ func main() {
 	policy.MaybeSleepMin = 5000
 	policy.MaybeSleepMax = 10000
 	bot.AutoFollowFollowersAsync("nasa", 1, policy)
+	apodClient := apod.MakeNasaApodClient()
+	bot.TweetImagePeriodicallyAsync(apodClient.FetchHD, 24*time.Hour)
 	bot.Wait()
 }
