@@ -24,10 +24,6 @@ const (
 
 // Nasa constants
 const (
-	nasaAsteroidsAPIGet = "https://api.nasa.gov/neo/rest/v1/feed?api_key="
-	nasaAPIDefaultKey   = "DEMO_KEY"
-	nasaTimeFormat      = "2006-01-02"
-	fetchMaxSizeError   = "cannot fetch infos for more than 7 days in one request"
 	// flags definitions
 	firstOffsetFlag   = "first-offset"
 	offsetFlag        = "offset"
