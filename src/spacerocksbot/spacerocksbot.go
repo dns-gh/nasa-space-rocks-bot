@@ -5,17 +5,15 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
 	"log"
-	"os"
 	"path/filepath"
 	"time"
 
+	"github.com/dns-gh/betterlog"
+	conf "github.com/dns-gh/flagsconfig"
 	apod "github.com/dns-gh/nasa-apod-client/nasaclient"
 	neo "github.com/dns-gh/nasa-neo-client/nasaclient"
 	"github.com/dns-gh/twbot"
-
-	conf "github.com/dns-gh/flagsconfig"
 )
 
 const (
@@ -49,33 +47,6 @@ var (
 	maxRandTimeSleepBetweenRequests = 120 // seconds
 )
 
-type timeWriter struct {
-	writer io.Writer
-}
-
-func (w timeWriter) Write(p []byte) (int, error) {
-	date := time.Now().Format("[2006-01-02 15:04:05] ")
-	p = append([]byte(date), p...)
-	return w.writer.Write(p)
-}
-
-func makeDateWriter(w io.Writer) io.Writer {
-	return &timeWriter{w}
-}
-
-func makeLogger(path string) (string, *os.File, error) {
-	abs, err := filepath.Abs(path)
-	if err != nil {
-		return "", nil, err
-	}
-	err = os.MkdirAll(filepath.Dir(abs), os.ModePerm)
-	if err != nil {
-		return "", nil, err
-	}
-	f, err := os.OpenFile(abs, os.O_WRONLY+os.O_APPEND+os.O_CREATE, os.ModePerm)
-	return abs, f, err
-}
-
 func main() {
 	firstOffset := flag.Int(firstOffsetFlag, 0, "[nasa] offset when fetching data for the first time (days)")
 	offset := flag.Int(offsetFlag, 3, "[nasa] offset when fetching data (days)")
@@ -88,17 +59,11 @@ func main() {
 	twitterTweetsPath := flag.String(twitterTweetsPathFlag, "tweets.json", "[twitter] data file path for tweets")
 	debug := flag.Bool(debugFlag, false, "[twitter] debug mode")
 	_, err := conf.NewConfig("nasa.config")
-	// log to a file also
-	log.SetFlags(0)
-	logPath, f, err := makeLogger(filepath.Join(filepath.Dir(os.Args[0]), "Debug", "bot.log"))
-	if err == nil {
-		defer f.Close()
-		log.SetOutput(makeDateWriter(io.MultiWriter(f, os.Stderr)))
-	}
+	f, err := betterlog.MakeDateLogger(filepath.Join("Debug", "bot.log"))
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
-	log.Println("[info] logging to:", logPath)
+	defer f.Close()
 	log.Println("[nasa] first-offset:", *firstOffset)
 	log.Println("[nasa] offset:", *offset)
 	log.Println("[nasa] body:", *body)
