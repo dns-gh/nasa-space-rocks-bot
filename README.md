@@ -4,6 +4,8 @@
 
 The Nasa space rocks bot is a Twitter Bot connected to the Nasa API to get info about threatening asteroids coming near earth.
 
+See https://twitter.com/SpaceRocksBot for one instance of it.
+
 It uses the following nasa client to talk to the Nasa Neo API: https://github.com/dns-gh/nasa-neo-client
 
 It has also a specified and user-defined bot behaviors thanks to https://github.com/dns-gh/twbot.
