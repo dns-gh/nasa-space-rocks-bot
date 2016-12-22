@@ -49,7 +49,7 @@ You can find get them here: https://api.nasa.gov/index.html#apply-for-an-api-key
 ## Build and usage
 
 ```
-@working_dir $ go install nasa-space-rocks-bot
+@working_dir $ go install spacerocksbot
 @working_dir $ bin/spacerocksbot.exe -help
   -body string
         [nasa] orbiting body to watch for close asteroids (default "Earth")
